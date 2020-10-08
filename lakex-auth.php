@@ -4,7 +4,7 @@
  * Description: Basic Authentication handler for Woocommerce user authentication in apps
  * Author: Olalekan Oladipupo
  * Author URI: https://github.com/lakexyde/
- * Version: 0.1
+ * Version: 0.2
  * Plugin URI: https://github.com/lakexyde/lakex-wp-auth
  */
 
@@ -14,18 +14,17 @@ function register_api_hooks() {
   register_rest_route(
     'lakex-auth', '/login/',
     array(
-      'methods'  => 'GET',
+      'methods'  => 'POST',
       'callback' => 'login',
     )
   );
 }
 
 function login($request){
-    $creds = array();
-    $creds['user_login'] = $request["username"];
-    $creds['user_password'] =  $request["password"];
-    $creds['remember'] = true;
-    $user = wp_signon( $creds, false );
+    $username = $request->get_param( 'username' );
+    $password = $request->get_param( 'password' );
+  
+    $user = wp_authenticate( $username, $password );
 
     if ( is_wp_error($user) )
       echo $user->get_error_message();
